@@ -24,70 +24,68 @@ public class EggInformation : MonoBehaviour
     void Awake()
     {
         _now = GetComponent<SpriteRenderer>();
-        sprites[0] = MainTitle_UI.Instance.egg_animal[int.Parse( MainTitle_UI.Instance.egg_state[MainTitle_UI.Instance.selected_title])];
-        _now.sprite = sprites[0];
-        
+        sprites[ 0 ] = MainTitle_UI.Instance.egg_animal[ int.Parse(MainTitle_UI.Instance.egg_state[ MainTitle_UI.Instance.selected_title ]) ];
+        _now.sprite = sprites[ 0 ];
     }
 
-    // Update is called once per frame
-    void Update ()
+    void Update()
     {
-        if(egg_born)
+        if( egg_born )
         {
-            _now.sprite = sprites[1];
+            _now.sprite = sprites[ 1 ];
         }
         else
         {
-            if (click_num >= MAX_CLICK)
+            if( click_num >= MAX_CLICK )
             {
                 egg_born = true;
                 return;
             }
 
-            _now.sprite = sprites[0];
+            _now.sprite = sprites[ 0 ];
 
 #if UNITY_EDITOR
-            if (Input.GetMouseButtonDown(0))
+            if( Input.GetMouseButtonDown(0) )
             {
-                touchedPos = (Input.mousePosition);
+                touchedPos = ( Input.mousePosition );
                 Ray ray = Camera.main.ScreenPointToRay(touchedPos);
-                RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
+                RaycastHit2D hit = Physics2D.GetRayIntersection(ray , Mathf.Infinity);
 
-                if (hit.collider != null && hit.collider.transform == transform)
+                if( hit.collider != null && hit.collider.transform == transform )
                 {
                     ++click_num;
-                    Instantiate(hit_prefab, hit.point, Quaternion.identity, null);
+                    Instantiate(hit_prefab , hit.point , Quaternion.identity , null);
                     Debug.Log(touchedPos);
                 }
             }
 #endif
 
 #if UNITY_ANDROID
-        touchOn = false;
+            //touchOn = false;
 
-        if (Input.touchCount > 0)
-        {    //터치가 1개 이상이면.
-            for (int i = 0; i < Input.touchCount; i++)
-            {
-                tempTouchs = Input.GetTouch(i);
-                if (tempTouchs.phase == TouchPhase.Began)
-                {    //해당 터치가 시작됐다면.
-                    touchedPos = Camera.main.ScreenToWorldPoint(tempTouchs.position);//get world position.
-                    touchOn = true;
-                    Debug.Log(touchedPos);
-                    Ray ray = Camera.main.ScreenPointToRay(touchedPos);
-                    RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
-
-                    if (hit.collider != null && hit.collider.transform == transform)
-                    {
-                        ++click_num;
-                        Instantiate(hit_prefab, hit.point, Quaternion.identity, null);
+            if( Input.touchCount > 0 )
+            {    //터치가 1개 이상이면.
+                for( int i = 0 ; i < Input.touchCount ; i++ )
+                {
+                    tempTouchs = Input.GetTouch(i);
+                    if( tempTouchs.phase == TouchPhase.Began )
+                    {    //해당 터치가 시작됐다면.
+                        touchedPos = Camera.main.ScreenToWorldPoint(tempTouchs.position);//get world position.
+                        touchOn = true;
                         Debug.Log(touchedPos);
+                        Ray ray = Camera.main.ScreenPointToRay(touchedPos);
+                        RaycastHit2D hit = Physics2D.Raycast(touchedPos, Vector2.zero);
+
+                        if( hit )
+                        {
+                            ++click_num;
+                            Instantiate(hit_prefab , hit.point , Quaternion.identity , null);
+                            Debug.Log(touchedPos);
+                        }
+                        break;   //한 프레임(update)에는 하나만.
                     }
-                    break;   //한 프레임(update)에는 하나만.
                 }
             }
-        }
 #endif
 
         }

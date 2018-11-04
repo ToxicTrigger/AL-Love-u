@@ -93,8 +93,7 @@ public class MainTitle_UI : MonoBehaviour
     {
         fade_ani.SetBool("fade", true);
         yield return new WaitForSeconds(1.0f);
-        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-        yield return SceneManager.LoadSceneAsync(SceneName);
+        yield return SceneManager.LoadSceneAsync(SceneName, LoadSceneMode.Single);
         fade_ani.SetBool("fade", false);
     }
 
@@ -117,5 +116,13 @@ public class MainTitle_UI : MonoBehaviour
     public void change_scene(string SceneName)
     {
         StartCoroutine(event_change_scene(SceneName));
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            PlayerPrefs.DeleteAll();
+        }
     }
 }
